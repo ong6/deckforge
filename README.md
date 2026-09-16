@@ -2,9 +2,9 @@
 
 Agent-first presentation studio for field engineering. Local, headless, with a measured preflight.
 
-I built this because the decks for customer engagements (discovery readouts, architecture walkthroughs, pilot results) were increasingly written by an agent, and an agent will happily overflow a slide or assert a number nobody measured. deckforge gives the agent a CLI and an MCP server with 19 operations over a versioned deck library: create, edit one slide, checkpoint, review, render, export. Every mutation carries the deck's current revision, so a stale writer is rejected instead of clobbering work. `deck.render` opens the deck in headless Chromium and measures every slide for overflow, so a text box that spills past the frame fails preflight instead of being guessed at. There is a small browser UI for when a human wants to look. Nothing depends on it.
+Customer decks (discovery readouts, architecture walkthroughs, pilot results) are now mostly written by an agent. An agent will overflow a slide or assert a number nobody measured. deckforge gives the agent a CLI and an MCP server with 19 operations over a versioned deck library: create, edit one slide, checkpoint, review, render, export. Every mutation carries the deck's current revision. A stale writer is rejected instead of clobbering work. `deck.render` opens the deck in headless Chromium and measures every slide for overflow, so a text box that spills past the frame fails preflight. A small browser UI exists for when a human wants to look. Nothing depends on it.
 
-Decks are version 1 JSON: six layouts, three themes, up to 30 slides, with each claim labelled evidence, assumption or proposal. Four skills ship in `skills/` for the recurring deck types (discovery narrative, technical architecture, pilot readout, deck review), each with a template deck, evaluation prompts and a format reference.
+Decks are version 1 JSON: six layouts, three themes, up to 30 slides. Each claim is labelled evidence, assumption or proposal. Four skills ship in `skills/` for the recurring deck types (discovery narrative, technical architecture, pilot readout, deck review), each with a template deck, evaluation prompts and a format reference.
 
 ## Quick start
 
@@ -32,7 +32,7 @@ Operations take JSON on `--input file.json` or stdin and answer with `{ ok, data
 
 ## In the suite
 
-deckforge is one of three tools in [fieldpack](https://github.com/ong6/fieldpack). [proofpack](https://github.com/ong6/proofpack) can hand pilot evidence to deckforge for a readout deck, and the deck skills here are the kind of thing [skillforge](https://github.com/ong6/skillforge) versions and evaluates.
+deckforge is one of three tools in [fieldpack](https://github.com/ong6/fieldpack). [proofpack](https://github.com/ong6/proofpack) hands pilot evidence to deckforge for a readout deck. The deck skills here are what [skillforge](https://github.com/ong6/skillforge) versions and evaluates.
 
 ## More from ong6
 
@@ -44,3 +44,4 @@ Forges make things, packs bundle them.
 - [proofpack](https://github.com/ong6/proofpack) — pilot evidence, review proposals and customer-safe handovers
 - [fieldpack](https://github.com/ong6/fieldpack) — deckforge, skillforge and proofpack as one local-first suite
 - [skillpack](https://github.com/ong6/skillpack) — the Claude Code and Codex skills used across all of these
+- [uipack](https://github.com/ong6/uipack) — React and SVG figure components behind the diagrams on junxiong.dev
