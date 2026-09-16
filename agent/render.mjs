@@ -9,7 +9,7 @@ export async function render(snapshot, { format, slideNumber }) {
   const css = await readFile(path.join(ROOT, 'public/slide.css'), 'utf8');
   const renderer = await readFile(path.join(ROOT, 'public/render.js'), 'utf8');
   let browser;
-  try { browser = await chromium.launch(); } catch { throw fault('BROWSER_UNAVAILABLE', 'Chromium unavailable. Run npm run browser:install in the Fielddeck package (explicit download), or configure PLAYWRIGHT_BROWSERS_PATH.'); }
+  try { browser = await chromium.launch(); } catch { throw fault('BROWSER_UNAVAILABLE', 'Chromium unavailable. Run npm run browser:install in the Deckforge package (explicit download), or configure PLAYWRIGHT_BROWSERS_PATH.'); }
   try {
     const page = await browser.newPage({ viewport: { width: 1600, height: 900 } });
     await page.route('**/*', route => route.abort());

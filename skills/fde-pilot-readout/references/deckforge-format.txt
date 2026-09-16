@@ -1,4 +1,4 @@
-FIELDDECK JSON v1 — portable format reference
+DECKFORGE JSON v1 — portable format reference
 
 Copy assets/template.json and produce a single JSON object without comments, HTML, executable code, or unknown fields. No tools or network are needed to author it. Import using the studio's Import control; export the previous deck as backup first.
 

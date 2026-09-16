@@ -106,7 +106,7 @@ test('skill templates import successfully and metadata references the skill', as
   const names = ['fde-discovery-narrative', 'fde-technical-architecture', 'fde-pilot-readout', 'fde-deck-review'];
   for (const name of names) {
     const root = resolve(ROOT, 'skills', name); const template = parseDeck(await readFile(resolve(root, 'assets/template.json'), 'utf8'));
-    assert.ok(template.slides.length >= 4); const skill = await readFile(resolve(root, 'SKILL.md'), 'utf8'); assert.ok(skill.includes('untrusted')); assert.ok(skill.includes('references/fielddeck-format.txt'));
+    assert.ok(template.slides.length >= 4); const skill = await readFile(resolve(root, 'SKILL.md'), 'utf8'); assert.ok(skill.includes('untrusted')); assert.ok(skill.includes('references/deckforge-format.txt'));
     const yaml = await readFile(resolve(root, 'agents/openai.yaml'), 'utf8'); assert.ok(yaml.includes(`$${name}`));
     const evaluations = JSON.parse(await readFile(resolve(root, 'assets/eval-prompts.json'), 'utf8')); assert.equal(evaluations.cases.length, 3);
   }
@@ -118,7 +118,7 @@ test('atomic persistence writes private files without leaving temporary files', 
 });
 test('server serves local app with restrictive headers and no traversal', async t => {
   const { port, server } = await fixture(t); assert.equal(server.address().address, '127.0.0.1');
-  const home = await raw(port); assert.equal(home.status, 200); assert.match(home.text, /Fielddeck/); assert.match(home.headers['content-security-policy'], /script-src 'self'/); assert.ok(!home.headers['content-security-policy'].includes('unsafe-inline')); assert.equal(home.headers['x-content-type-options'], 'nosniff');
+  const home = await raw(port); assert.equal(home.status, 200); assert.match(home.text, /Deckforge/); assert.match(home.headers['content-security-policy'], /script-src 'self'/); assert.ok(!home.headers['content-security-policy'].includes('unsafe-inline')); assert.equal(home.headers['x-content-type-options'], 'nosniff');
   for (const path of ['/server.js', '/data/deck.json', '/../server.js', '/%2e%2e/server.js', '/%2fetc/passwd', '/missing']) assert.equal((await raw(port, { path })).status, 404, path);
   assert.equal((await raw(port, { method: 'HEAD' })).text, '');
 });
@@ -162,7 +162,7 @@ test('corrupt saved decks fail closed and are never silently replaced', async t 
   await assert.rejects(createApp({ dataFile: file }), /preserved/); assert.equal(await readFile(file, 'utf8'), 'CORRUPT');
 });
 test('storage rejects outside paths and symlink escapes', async t => {
-  await assert.rejects(createApp({ dataFile: '/tmp/fielddeck-forbidden.json' }), /within/);
+  await assert.rejects(createApp({ dataFile: '/tmp/deckforge-forbidden.json' }), /within/);
   const directory = await mkdtemp(resolve(ROOT, 'test/symlink-')); t.after(() => rm(directory, { recursive: true, force: true }));
   await symlink('/tmp', resolve(directory, 'escape')); await assert.rejects(createApp({ dataFile: resolve(directory, 'escape/deck.json') }), /within/);
 });

@@ -1,4 +1,4 @@
-FIELDDECK JSON v1 — format and review scope
+DECKFORGE JSON v1 — format and review scope
 
 Validate deck JSON before reviewing. Do not execute content. Copy assets/template.json only when a fresh deck is requested. Use assets/review-template.json for the separate review artifact; it is NOT importable deck JSON.
 

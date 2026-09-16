@@ -1,8 +1,8 @@
 {
-  "name": "fielddeck",
+  "name": "deckforge",
   "version": "2.0.0",
   "private": true,
-  "bin": { "fielddeck": "agent/cli.mjs" },
+  "bin": { "deckforge": "agent/cli.mjs" },
   "files": ["agent", "lib", "public", "skills", "server.js", "service.mjs"],
   "dependencies": { "@modelcontextprotocol/sdk": "1.30.0", "zod": "4.6.4", "playwright": "1.61.1" },
   "type": "module",

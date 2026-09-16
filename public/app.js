@@ -153,7 +153,7 @@ function confirmChange(title, message, accept = 'Continue') {
 }
 function download(contents, type, extension) {
   const url = URL.createObjectURL(new Blob([contents], { type }));
-  const a = document.createElement('a'); a.href = url; a.download = `${deck.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 70) || 'fielddeck'}.${extension}`;
+  const a = document.createElement('a'); a.href = url; a.download = `${deck.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 70) || 'deckforge'}.${extension}`;
   document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 30000);
 }
 function openLayoutChooser() { if (deck.slides.length >= MAX_SLIDES) return; $('#layout-dialog').showModal(); }
@@ -212,7 +212,7 @@ $('#export-json-button').addEventListener('click', () => { try { download(JSON.s
 $('#export-html-button').addEventListener('click', () => guarded(async () => { await saveNow(); const response = await request(`/api/export/html?deckId=${encodeURIComponent(deckId)}`); download(await response.text(), 'text/html', 'html'); notify('Offline presentation exported. Speaker notes excluded.'); }));
 $('#print-button').addEventListener('click', async () => {
   const popup = window.open('about:blank', '_blank');
-  if (!popup) { error('Allow pop-ups for Fielddeck to open the print view, or export HTML and print that file.'); return; }
+  if (!popup) { error('Allow pop-ups for Deckforge to open the print view, or export HTML and print that file.'); return; }
   popup.opener = null;
   if (busy) { popup.close(); return; }
   await guarded(async () => { try { await saveNow(); popup.location.href = `/present?deckId=${encodeURIComponent(deckId)}`; notify('In the new window, choose Print / PDF. Enable background graphics.'); } catch (issue) { popup.close(); throw issue; } });
@@ -286,7 +286,7 @@ function adoptEntry(data, reset = true) {
   generation = 0; savedGeneration = 0; selected = 0; invalidateReport('Deck switched');
   if (reset) { resetHistory(); report = null; $('#preflight-results').textContent = ''; invalidateReport(); }
   renderAll(); renderLibrary(); status(archived ? 'Archived · read only' : 'Saved locally'); clearError();
-  try { sessionStorage.setItem('fielddeck-selected-deck', deckId); } catch {}
+  try { sessionStorage.setItem('deckforge-selected-deck', deckId); } catch {}
 }
 async function switchDeck(id) {
   return guarded(async () => {
@@ -412,10 +412,10 @@ async function init() {
     $('#migration-panel').hidden = !library.migrationRequired;
     for (const node of document.querySelectorAll('main button, main input, main select, main textarea')) node.disabled = library.migrationRequired && node.id !== 'migrate-button';
     if (library.migrationRequired) { $('#migration-description').textContent = `Saved deck: ${library.legacyTitle}. No migration has run yet.`; status('Migration needs confirmation', 'dirty'); return; }
-    let chosen; try { chosen = sessionStorage.getItem('fielddeck-selected-deck'); } catch {}
+    let chosen; try { chosen = sessionStorage.getItem('deckforge-selected-deck'); } catch {}
     if (!library.decks.some(item => item.id === chosen)) chosen = library.primaryDeckId;
     adoptEntry(await (await request(deckPath(chosen))).json()); renderLibrary();
-  } catch (issue) { status('Workspace unavailable', 'error'); error(`Could not open the workspace. ${issue.message} Check that the Fielddeck server is running, then reload.`); for (const button of document.querySelectorAll('main button')) button.disabled = true; }
+  } catch (issue) { status('Workspace unavailable', 'error'); error(`Could not open the workspace. ${issue.message} Check that the Deckforge server is running, then reload.`); for (const button of document.querySelectorAll('main button')) button.disabled = true; }
 }
 window.addEventListener('focus', () => { if (deck && !busy) refreshLibrary().catch(() => {}); });
 document.fonts.addEventListener('loadingdone', () => { if (report) invalidateReport('Fonts changed'); });

@@ -1,13 +1,13 @@
 ---
-name: fielddeck-workflow
-description: Create, edit, validate, render and export Fielddeck presentations through its CLI or MCP tools. Use for technical discovery decks, architecture explanations, pilot readouts, slide review and versioned deck recovery.
+name: deckforge-workflow
+description: Create, edit, validate, render and export Deckforge presentations through its CLI or MCP tools. Use for technical discovery decks, architecture explanations, pilot readouts, slide review and versioned deck recovery.
 ---
 
-# Fielddeck agent workflow
+# Deckforge agent workflow
 
 ## Connect and discover
 
-Resolve the package root two directories above this skill folder. Run `npm ci --prefix PACKAGE_ROOT` once when authorized. Use `node PACKAGE_ROOT/agent/cli.mjs` as the executable; local package installations also provide `fielddeck`.
+Resolve the package root two directories above this skill folder. Run `npm ci --prefix PACKAGE_ROOT` once when authorized. Use `node PACKAGE_ROOT/agent/cli.mjs` as the executable; local package installations also provide `deckforge`.
 
 Run `commands` to retrieve current input schemas, `doctor --workspace PATH` to inspect setup, and `init --workspace PATH` only for an explicitly selected workspace. Run `setup --workspace PATH` to print an MCP configuration; do not modify host settings without permission. MCP tool names replace command dots with underscores. Use `ui --workspace PATH` only when human visual review is useful.
 

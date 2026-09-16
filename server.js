@@ -10,7 +10,7 @@ import { sampleDeck } from './lib/sample.js';
 import { atomicWrite, revisionOf, entryRevision, openWorkspace, preserveLegacy, regularFile, validateWorkspace, WORKSPACE_LIMITS, strictObject, boundedText, problem, detail, newEntry, metadata } from './lib/workspace.js';
 import { briefBundle, skillFiles } from './lib/zip.js';
 import { withLock } from './agent/workspace.mjs';
-import { FielddeckService } from './service.mjs';
+import { DeckforgeService } from './service.mjs';
 export { atomicWrite, revisionOf } from './lib/workspace.js';
 export const ROOT = dirname(fileURLToPath(import.meta.url));
 const PUBLIC = resolve(ROOT, 'public'), SKILL_ROOT = resolve(ROOT, 'skills');
@@ -52,7 +52,7 @@ export async function createApp({ dataDir = resolve(ROOT, 'data'), dataFile = re
     catch (error) { if (error.code !== 'ENOENT' || dirname(ancestor) === ancestor) throw error; ancestor = dirname(ancestor); }
   }
   dataFile = resolve(canonicalAncestor, relative(ancestor, resolve(dataFile)));
-  if (!explicitWorkspace && !dataFile.startsWith(canonicalRoot + '/')) throw new Error('Storage must stay within the Fielddeck directory.');
+  if (!explicitWorkspace && !dataFile.startsWith(canonicalRoot + '/')) throw new Error('Storage must stay within the Deckforge directory.');
   if (['workspace.json', 'deck.pre-migration.json'].includes(basename(dataFile))) throw new Error('Legacy dataFile must not use a reserved workspace or backup filename.');
   const workspaceFile = resolve(dirname(dataFile), 'workspace.json'), backupFile = resolve(dirname(dataFile), 'deck.pre-migration.json');
   let { workspace, legacy } = await withLock(dirname(dataFile), () => openWorkspace(dataFile, workspaceFile), { create: true });
@@ -81,7 +81,7 @@ export async function createApp({ dataDir = resolve(ROOT, 'data'), dataFile = re
     const sendDetail = (entry, status = 200, extra = {}) => { res.setHeader('ETag', entryRevision(entry)); send(status, { ...detail(entry), ...extra }); };
     try {
       const port = server.address()?.port, hosts = [`127.0.0.1:${port}`, `localhost:${port}`];
-      if (!hosts.includes(req.headers.host)) return send(403, { error: 'Untrusted Host. Open the loopback URL printed by Fielddeck.' });
+      if (!hosts.includes(req.headers.host)) return send(403, { error: 'Untrusted Host. Open the loopback URL printed by Deckforge.' });
       const origin = req.headers.origin;
       if ((origin && !hosts.map(host => `http://${host}`).includes(origin)) || req.headers['sec-fetch-site'] === 'cross-site') return send(403, { error: 'Cross-origin requests are not allowed.' });
       if (!req.url.startsWith('/') || req.url.startsWith('//')) return send(400, { error: 'Invalid request path.' });
@@ -113,7 +113,7 @@ export async function createApp({ dataDir = resolve(ROOT, 'data'), dataFile = re
             return send(200, await workspaceSummary());
           }
           requireWorkspace();
-          const service = new FielddeckService(dirname(dataFile)); service.workspace = workspace; service.legacy = legacy;
+          const service = new DeckforgeService(dirname(dataFile)); service.workspace = workspace; service.legacy = legacy;
           const finish = async (result, status = 200, extra = {}) => { workspace = service.workspace; res.setHeader('ETag', result.revision); send(status, { ...result, ...extra }); };
           if (path === '/api/decks') {
             strictObject(body, ['title', 'starter', 'brief']);
@@ -181,14 +181,14 @@ export async function createApp({ dataDir = resolve(ROOT, 'data'), dataFile = re
         const [css, presentationJS] = await Promise.all(['slide.css', 'presentation.js'].map(file => readFile(resolve(PUBLIC, file), 'utf8')));
         const html = exportHTML(entry.deck, css, presentationJS);
         res.setHeader('Content-Security-Policy', "default-src 'none'; script-src 'sha256-" + createHash('sha256').update(presentationJS).digest('base64') + "'; style-src 'sha256-" + createHash('sha256').update(css).digest('base64') + "'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'");
-        if (path === '/api/export/html') res.setHeader('Content-Disposition', 'attachment; filename="fielddeck-presentation.html"');
+        if (path === '/api/export/html') res.setHeader('Content-Disposition', 'attachment; filename="deckforge-presentation.html"');
         return send(200, html, 'text/html; charset=utf-8');
       }
       const file = staticFiles.get(path); if (!file) return send(404, { error: 'Not found.' });
       return send(200, await readFile(resolve(PUBLIC, file)), mime[extname(file)]);
     }); } catch (error) {
       const status = error.status || (error instanceof ValidationError ? 400 : 500);
-      if (status === 500) console.error('Fielddeck request failed:', error.message);
+      if (status === 500) console.error('Deckforge request failed:', error.message);
       send(status, { error: status === 500 ? 'Could not complete the request. Your previous saved workspace is preserved; check the server terminal.' : error.message });
     }
   });
@@ -199,17 +199,17 @@ export const createServer = createApp;
 export async function start(port = 4311, options = {}) {
   const server = await createApp(options);
   await new Promise((accept, reject) => { server.once('error', reject); server.listen(port, '127.0.0.1', accept); });
-  console.log(`Fielddeck is ready at http://127.0.0.1:${server.address().port}\nWorkspace storage: ${resolve(dirname(options.dataFile || resolve(options.dataDir || resolve(ROOT, 'data'), 'deck.json')), 'workspace.json')}\nPress Ctrl+C to stop. No cloud services .`);
+  console.log(`Deckforge is ready at http://127.0.0.1:${server.address().port}\nWorkspace storage: ${resolve(dirname(options.dataFile || resolve(options.dataDir || resolve(ROOT, 'data'), 'deck.json')), 'workspace.json')}\nPress Ctrl+C to stop. No cloud services .`);
   for (const signal of ['SIGINT', 'SIGTERM']) process.once(signal, () => { server.close(() => process.exit(0)); server.closeIdleConnections(); });
   return server;
 }
 if (process.argv[1] && await realpath(resolve(process.argv[1])).catch(() => '') === fileURLToPath(import.meta.url)) {
   const args = process.argv.slice(2);
   if (args.length === 1 && ['--help', '-h'].includes(args[0])) {
-    console.log('Fielddeck — local slide studio\n\nUsage: node server.js [--port PORT]\n       npm start -- --port 4311\n       npm test\n\nDefault: http://127.0.0.1:4311 (loopback only)\nStorage: data/workspace.json beside this server; writes are atomic.\nExisting deck.json requires explicit migration and is preserved byte-for-byte in deck.pre-migration.json.\nDeck JSON imports update the selected deck after confirmation. Export a backup first.\nHTML export is standalone and offline; notes stay private in JSON.\nPrint / PDF opens a presentation; use the browser print dialog.\nPortable agent skills are in skills/; nothing is installed globally.');
+    console.log('Deckforge — local slide studio\n\nUsage: node server.js [--port PORT]\n       npm start -- --port 4311\n       npm test\n\nDefault: http://127.0.0.1:4311 (loopback only)\nStorage: data/workspace.json beside this server; writes are atomic.\nExisting deck.json requires explicit migration and is preserved byte-for-byte in deck.pre-migration.json.\nDeck JSON imports update the selected deck after confirmation. Export a backup first.\nHTML export is standalone and offline; notes stay private in JSON.\nPrint / PDF opens a presentation; use the browser print dialog.\nPortable agent skills are in skills/; nothing is installed globally.');
   } else if (args.length && !(args.length === 2 && args[0] === '--port' && /^\d+$/.test(args[1]) && +args[1] >= 1024 && +args[1] <= 65535)) {
     console.error('Invalid arguments. Use node server.js --help.'); process.exitCode = 1;
   } else {
-    start(args.length ? +args[1] : 4311).catch(error => { console.error(`Fielddeck could not start: ${error.message}`); process.exitCode = 1; });
+    start(args.length ? +args[1] : 4311).catch(error => { console.error(`Deckforge could not start: ${error.message}`); process.exitCode = 1; });
   }
 }

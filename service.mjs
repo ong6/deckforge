@@ -9,7 +9,7 @@ import { skillFiles, briefBundle } from './lib/zip.js';
 import { atomicWrite, openWorkspace, preserveLegacy, validateWorkspace, newEntry, detail, entryRevision, WORKSPACE_LIMITS } from './lib/workspace.js';
 import { fault, fingerprint } from './agent/workspace.mjs';
 export const ROOT = path.dirname(fileURLToPath(import.meta.url));
-export class FielddeckService {
+export class DeckforgeService {
   constructor(root) { this.root = root; this.file = path.join(root, 'workspace.json'); this.legacyFile = path.join(root, 'deck.json'); }
   async open() { const loaded = await openWorkspace(this.legacyFile, this.file); Object.assign(this, loaded); return this; }
   ready() { if (!this.workspace) throw fault('MIGRATION_REQUIRED', 'Legacy deck requires explicit workspace.migrate confirmation.', 409); }

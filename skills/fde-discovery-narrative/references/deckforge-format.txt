@@ -1,6 +1,6 @@
-FIELDDECK JSON v1 — portable format reference
+DECKFORGE JSON v1 — portable format reference
 
-Return a JSON object, not HTML, Markdown, or executable code. Use assets/template.json as a starting point. No external dependencies are required. Import via Fielddeck's Import button after exporting a backup.
+Return a JSON object, not HTML, Markdown, or executable code. Use assets/template.json as a starting point. No external dependencies are required. Import via Deckforge's Import button after exporting a backup.
 
 Deck fields (no unknown keys): version (exactly 1), id (1–80 ASCII letters/digits/_/-), title (nonblank, max 140), subtitle (max 360), audience (max 160), theme (navy | cream | coral), slides (1–30 objects). Imports are limited to 1 MiB UTF-8.
 

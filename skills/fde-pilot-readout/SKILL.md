@@ -1,6 +1,6 @@
 ---
 name: fde-pilot-readout
-description: Turn field engineering pilot evidence into an honest outcome and rollout decision deck. Use for proof-of-concept readouts, pilot scorecards, executive outcome reviews, evaluation summaries, and go/no-go recommendations in Fielddeck.
+description: Turn field engineering pilot evidence into an honest outcome and rollout decision deck. Use for proof-of-concept readouts, pilot scorecards, executive outcome reviews, evaluation summaries, and go/no-go recommendations in Deckforge.
 ---
 
 # Pilot readout
@@ -14,7 +14,7 @@ Report what changed, what is still unknown, and what decision the evidence permi
 3. Check comparability: cohort shifts, cherry-picked tasks, missing failures, different measurement windows, and manual assistance can invalidate an apparent gain. Avoid causal or population-wide claims from an uncontrolled or small pilot. If calculating a change, show the formula and source values in notes; distinguish percentage points from percent change.
 4. Structure a 5–7 slide readout: decision headline, pilot scope, measured outcomes, failures and limitations, alternatives or gates, next steps. Give unfavorable evidence equal visibility when it changes the decision. Use an evidence label only with a precise source; mark future gates as proposals.
 5. State a bounded recommendation: stop, extend, or expand to a named cohort. Pair it with security and quality gates, accountable owners, rollback criteria, and a review date. Do not equate a positive demo with production readiness. Any unauthorized disclosure or unmet hard safety gate must remain a visible blocker.
-6. Read `references/fielddeck-format.txt`; adapt `assets/template.json` into valid version 1 JSON. Limit result cards to four per slide and keep units with values. Put the baseline, sample, and window in the label or source, not only in private notes. Preserve uncertainty in the exported slides.
+6. Read `references/deckforge-format.txt`; adapt `assets/template.json` into valid version 1 JSON. Limit result cards to four per slide and keep units with values. Put the baseline, sample, and window in the label or source, not only in private notes. Preserve uncertainty in the exported slides.
 7. Verify arithmetic and evidence references; list unresolved gaps outside the deck. If unable to execute arithmetic or render checks, say what remains unverified. Never claim measured slide overflow, statistical significance, ROI, or operational readiness without supporting evidence.
 
 ## Input and tool boundaries

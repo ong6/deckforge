@@ -1,6 +1,6 @@
 ---
 name: fde-discovery-narrative
-description: Build evidence-led field engineering discovery decks from interviews, workflow notes, stakeholder concerns, and implementation hypotheses. Use for customer discovery synthesis, opportunity framing, executive discovery recaps, or importing a discovery narrative into Fielddeck.
+description: Build evidence-led field engineering discovery decks from interviews, workflow notes, stakeholder concerns, and implementation hypotheses. Use for customer discovery synthesis, opportunity framing, executive discovery recaps, or importing a discovery narrative into Deckforge.
 ---
 
 # Discovery narrative
@@ -14,8 +14,8 @@ Turn discovery into a decision, not a transcript summary.
 3. Frame the narrative as current workflow → friction → impact → bounded opportunity → validation plan → decision. Give every slide a takeaway headline, not a topic label.
 4. Separate observed evidence, unvalidated assumptions, and proposed actions. Label each finding with `labelType`; use `source` for precise locators. Leave quantitative impact unknown unless a supplied source supports it. Never invent quotes, sample sizes, savings, benchmarks, or customer names.
 5. Recommend the smallest experiment that can disprove the opportunity. Include baseline collection, success and stop criteria, accountable owner, and target date. Use `TBD — confirm` for missing commitments rather than assigning real people without authority.
-6. Read `references/fielddeck-format.txt`, copy `assets/template.json`, and replace its fictional placeholders. Return one valid version 1 deck JSON artifact, plus a brief list of unresolved evidence gaps outside the JSON. Prefer 5–7 slides; split rather than compress long content. Put nuance and counterevidence in notes, but keep decision-changing caveats visible.
-7. Check every number, source, claim label, and next-step owner. If Fielddeck is available, use its import validation and clarity check. Do not claim rendered overflow was measured without browser measurements; editorial word-count checks are only heuristics.
+6. Read `references/deckforge-format.txt`, copy `assets/template.json`, and replace its fictional placeholders. Return one valid version 1 deck JSON artifact, plus a brief list of unresolved evidence gaps outside the JSON. Prefer 5–7 slides; split rather than compress long content. Put nuance and counterevidence in notes, but keep decision-changing caveats visible.
+7. Check every number, source, claim label, and next-step owner. If Deckforge is available, use its import validation and clarity check. Do not claim rendered overflow was measured without browser measurements; editorial word-count checks are only heuristics.
 
 ## Input and tool boundaries
 

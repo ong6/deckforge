@@ -1,0 +1,4 @@
+interface:
+  display_name: "Deckforge agent workflow"
+  short_description: "Create and verify decision-ready slide decks"
+  default_prompt: "Use $deckforge-workflow to create and verify a presentation from supplied evidence."
