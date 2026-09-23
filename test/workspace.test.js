@@ -105,7 +105,7 @@ test('migration detects changed legacy bytes before backup or workspace creation
   const f = await fixture(t, { legacyBytes: JSON.stringify(sampleDeck()) }), revision = (await f.req('/api/workspace')).json().legacyRevision;
   await writeFile(f.dataFile, JSON.stringify({ ...sampleDeck(), title: 'Externally changed' }));
   assert.equal((await post(f, '/api/workspace/migrate', { confirm: true }, revision)).status, 409); assert.equal((await f.req('/api/workspace')).json().legacyTitle, 'Externally changed');
-  assert.deepEqual(await readdir(f.directory), ['deck.json']);
+  assert.deepEqual((await readdir(f.directory)).filter(name => name !== '.agent.lock'), ['deck.json']); // lock release can trail the HTTP response
 });
 test('corrupt workspaces and corrupt legacy beside a valid workspace fail closed', async t => {
   const directory = await mkdtemp(resolve(ROOT, 'test/corrupt-workspace-')); t.after(() => rm(directory, { recursive: true, force: true })); const file = resolve(directory, 'workspace.json');

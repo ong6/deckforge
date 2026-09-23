@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, rm, readFile, symlink, readdir, writeFile } from 'node:fs/promises';
+import { mkdtemp, realpath, rm, readFile, symlink, readdir, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -11,14 +11,14 @@ import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js'
 import { product } from '../agent/product.mjs';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const executable = path.join(root, 'agent/cli.mjs');
-async function fixture(t) { const workspace = await mkdtemp(path.join(tmpdir(), `${product.name}-agent-`)); t.after(() => rm(workspace, { recursive: true, force: true })); return { workspace }; }
+async function fixture(t) { const workspace = await realpath(await mkdtemp(path.join(tmpdir(), `${product.name}-agent-`))); t.after(() => rm(workspace, { recursive: true, force: true })); return { workspace }; }
 function run(args, input) { return new Promise((resolve, reject) => { const child = spawn(process.execPath, [executable, ...args], { cwd: tmpdir(), stdio: ['pipe', 'pipe', 'pipe'] }); let out = '', err = ''; child.stdout.on('data', b => out += b); child.stderr.on('data', b => err += b); child.on('error', reject); child.on('close', code => { try { resolve({ code, result: JSON.parse(out), err }); } catch { reject(new Error(`Invalid stdout: ${out}; stderr: ${err}`)); } }); child.stdin.end(input === undefined ? '' : JSON.stringify(input)); }); }
 test('CLI discovery is machine-readable and does not create a workspace', async t => { const o = await fixture(t); const r = await run(['commands', '--workspace', o.workspace]); assert.equal(r.code, 0, r.err); assert.ok(r.result.operations.length >= 15); for (const op of r.result.operations) { assert.equal(op.inputSchema.type, 'object'); assert.equal(op.inputSchema.additionalProperties, false); } assert.deepEqual(await readdir(o.workspace), []); });
 test('CLI init, status, unknown flags and wrong-product workspaces', async t => { const o = await fixture(t); assert.equal((await run(['init', '--workspace', o.workspace])).code, 0); const status = product.name === 'proofpack' ? 'pilot.list' : 'workspace.status'; const result = await run([status, '--workspace', o.workspace]); assert.equal(result.code, 0, JSON.stringify(result)); assert.equal((await run(['--unknown'])).result.ok, false); await writeFile(path.join(o.workspace, '.agent-workspace.json'), JSON.stringify({ version: 1, product: 'other' })); assert.equal((await run(['init', '--workspace', o.workspace])).result.error.code, 'WORKSPACE_MISMATCH'); });
 test('workspace symlinks and uninitialized operations fail closed', async t => { const o = await fixture(t); const status = product.name === 'proofpack' ? 'pilot.list' : 'workspace.status'; await assert.rejects(product.execute(status, {}, o), /init/i); const linked = `${o.workspace}-link`; await symlink(o.workspace, linked); t.after(() => rm(linked)); await assert.rejects(product.init({ workspace: linked }), /real directories/); });
 test('missing or symlinked initialized state cannot be reset by operations or init', async t => {
   const o = await fixture(t); await product.init(o);
-  const name = { deckforge: 'workspace.json', skillforge: 'state.json', proofpack: 'library.json' }[product.name];
+  const name = { deckforge: 'workspace.json', proofpack: 'library.json' }[product.name];
   const file = path.join(o.workspace, name), bytes = await readFile(file);
   await rm(file);
   const status = product.name === 'proofpack' ? 'pilot.list' : 'workspace.status';
