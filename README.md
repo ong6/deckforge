@@ -1,3 +1,6 @@
+> [!IMPORTANT]
+> **Archived on 2026-10-02.** This repository is read-only. deckforge is now two skills in [ong6/skills](https://github.com/ong6/skills): [`create-fde-deck`](https://github.com/ong6/skills/tree/main/skills/create-fde-deck) drafts a field-engineering deck and [`review-fde-deck`](https://github.com/ong6/skills/tree/main/skills/review-fde-deck) audits one. The CLI and MCP server were dropped. The README below is kept as history.
+
 # deckforge
 
 Agent-first presentation studio for field engineering. Local, headless, with a measured preflight.
